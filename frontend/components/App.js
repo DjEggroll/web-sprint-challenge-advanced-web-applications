@@ -47,7 +47,6 @@ export default function App() {
     axios.post("http://localhost:9000/api/login", {username, password})
     .then(res => {
       localStorage.setItem('token', res.data.token);
-      console.log(res);
       setMessage(res.data.message);
       redirectToArticles();
       setSpinnerOn(false);
@@ -70,7 +69,8 @@ export default function App() {
     setSpinnerOn(true);
     Api().get('/articles')
       .then(res => {
-        console.log(res);
+        setArticles(res.data.articles);
+        setMessage(res.data.message);
         setSpinnerOn(false);
       })
       .catch(err => {
