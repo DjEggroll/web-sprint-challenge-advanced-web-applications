@@ -8,6 +8,7 @@ import Spinner from './Spinner'
 
 import axios from 'axios';
 import Api from './../axios/index';
+import { PrivateRoute } from "./PrivateRoute";
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -156,6 +157,7 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
+            <PrivateRoute>
               <ArticleForm 
               postArticle={postArticle} 
               updateArticle={updateArticle} 
@@ -170,6 +172,7 @@ export default function App() {
               currentArticleId={currentArticleId}
               setCurrentArticleId={setCurrentArticleId}
               />
+            </PrivateRoute>
             </>
           } />
         </Routes>
