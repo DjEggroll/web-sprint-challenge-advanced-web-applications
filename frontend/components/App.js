@@ -74,7 +74,6 @@ export default function App() {
         setSpinnerOn(false);
       })
       .catch(err => {
-        console.log(err);
         redirectToLogin();
         setSpinnerOn(false);
       })
@@ -86,15 +85,59 @@ export default function App() {
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
+    setMessage('');
+    setSpinnerOn(true);
+    Api().post('/articles', article)
+      .then(res => {
+        // console.log(res);
+        setArticles([...articles, res.data.article]);
+        setMessage(res.data.message);
+        setSpinnerOn(false);
+      })
+      .catch(err => {
+        // console.log(err);
+        redirectToArticles();
+        setSpinnerOn(false);
+      })
   }
 
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
+    setMessage('');
+    Api().put(`/articles/${article_id}`, article)
+      .then(res => {
+        console.log(res, "Put Request");
+        setMessage(res.data.message);
+        setArticles(
+          articles.map(article => {
+            if (article.article_id === res.data.article.article_id){
+              return res.data.article
+            } else {
+              return article
+            }
+          })
+        )
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
-  const deleteArticle = article_id => {
+  const deleteArticle = articleId => {
     // ✨ implement
+    setMessage('');
+    setSpinnerOn(true);
+    Api().delete(`/articles/${articleId}`)
+      .then(res => {
+        console.log(res, "Delete Req");
+        setArticles(articles.filter(article => article.article_id !== articleId));
+        setMessage(res.data.message)
+        setSpinnerOn(false)
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   return (
@@ -113,8 +156,20 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm />
-              <Articles articles={articles} getArticles={getArticles}/>
+              <ArticleForm 
+              postArticle={postArticle} 
+              updateArticle={updateArticle} 
+              currentArticleId={currentArticleId} 
+              setCurrentArticleId={setCurrentArticleId}
+              articles={articles}
+              />
+              <Articles 
+              articles={articles} 
+              getArticles={getArticles}
+              deleteArticle={deleteArticle}
+              currentArticleId={currentArticleId}
+              setCurrentArticleId={setCurrentArticleId}
+              />
             </>
           } />
         </Routes>
